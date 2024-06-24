@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Revisão - Fusion Group</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://cdn.discordapp.com/attachments/1221087989057191947/1254585671537004668/Design_sem_nome.gif?ex=667a0775&is=6678b5f5&hm=fa4726d9b643a3b9ad250273316c257dd0b5b0a7990c4da33420668ace4d1010&');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .content {
+            background: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        p {
+            line-height: 1.6;
+        }
+        form {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        textarea {
+            height: 100px;
+        }
+        input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+        .summary {
+            text-align: left;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: none; /* Inicialmente oculto */
+        }
+        .summary-item {
+            margin-bottom: 10px;
+        }
+        .green-dot {
+            color: green;
+        }
+        .red-dot {
+            color: red;
+        }
+        .generate-summary {
+            margin-top: 10px;
+            background-color: #333;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .generate-summary:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <h1>Relatório de Revisão - Fusion Group</h1>
+            <form id="reportForm">
+                <label for="revisao">Revisão</label>
+                <select id="revisao" name="revisao">
+                    <option value=" ``` 🟢Revisão Aceita 🟢 ``` ">Aceita</option>
+                    <option value=" ``` 🔴Revisão Negada 🔴 ``` ">Negada</option>
+                </select>
+                
+                <label for="id">ID</label>
+                <input type="text" id="id" name="id">
+                
+                <label for="ticket_denuncia">Ticket Denúncia</label>
+                <input type="text" id="ticket_denuncia" name="ticket_denuncia">
+                
+                <label for="ticket_revisao">Ticket Revisão</label>
+                <input type="text" id="ticket_revisao" name="ticket_revisao">
+                
+                <label for="motivo">Motivo</label>
+                <textarea id="motivo" name="motivo"></textarea>
+                
+                <label for="punicao">Punição</label>
+                <select id="punicao" name="punicao">
+                    <option value="Prisão (300 meses + 600k de multa)">Prisão (300 meses + 600k de multa)</option>
+                    <option value="<@&1218693120183631974>">Advertência Verbal</option>
+                    <option value="<@&1218692969973022730>">Advertência 1</option>
+                    <option value="<@&1218693038629453975>">Advertência 2</option>
+                    <option value="<@&1218693194796241009>">Banido</option>
+                </select>
+
+                <label for="DecididoPelostaff">Decidido pelo Staff</label>
+                <input type="text" id="DecididoPelostaff" name="DecididoPelostaff">
+                
+                <input type="submit" value="Enviar">
+            </form>
+            <div class="summary" id="summaryDiv">
+                <h2>Resumo do Relatório</h2>
+                <div class="summary-item">
+                    <strong>Revisão:</strong> <span id="summaryRevisao"></span> <span id="revisaoIcon"></span>
+                </div>
+                <div class="summary-item">
+                    <strong>ID:</strong> <span id="summaryId"></span>
+                </div>
+                <div class="summary-item">
+                    <strong>Ticket Denúncia:</strong> <span id="summaryTicketDenuncia"></span>
+                </div>
+                <div class="summary-item">
+                    <strong>Ticket Revisão:</strong> <span id="summaryTicketRevisao"></span>
+                </div>
+                <div class="summary-item">
+                    <strong>Motivo:</strong> <span id="summaryMotivo"></span>
+                </div>
+                <div class="summary-item">
+                    <strong>Punição:</strong> <span id="summaryPunicao"></span>
+                </div>
+                <div class="summary-item">
+                    <strong>Decidido Pelo staff:</strong> <span id="summaryDecididoPelostaff"></span>
+                </div>
+            </div>
+            <button class="generate-summary" id="generateSummaryBtn">Gerar Resumo</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reportForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita o envio padrão do formulário
+            submitForm();
+        });
+
+        document.getElementById('generateSummaryBtn').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita o comportamento padrão do botão
+            generateSummary();
+        });
+
+        function submitForm() {
+            var formData = {
+                revisao: document.getElementById('revisao').value,
+                id: document.getElementById('id').value,
+                ticketDenuncia: document.getElementById('ticket_denuncia').value,
+                ticketRevisao: document.getElementById('ticket_revisao').value,
+                motivo: document.getElementById('motivo').value,
+                punicao: document.getElementById('punicao').value,
+                DecididoPelostaff: document.getElementById('DecididoPelostaff').value
+            };
+
+            updateSummary(formData);
+            sendToDiscord(formData);
+        }
+
+        function updateSummary(formData) {
+    document.getElementById('summaryRevisao').textContent = formData.revisao;
+    document.getElementById('summaryId').textContent = formData.id;
+    document.getElementById('summaryTicketDenuncia').textContent = formData.ticketDenuncia;
+    document.getElementById('summaryTicketRevisao').textContent = formData.ticketRevisao;
+    document.getElementById('summaryMotivo').textContent = formData.motivo;
+    document.getElementById('summaryPunicao').textContent = formData.punicao;
+    document.getElementById('summaryDecididoPelostaff').textContent = formData.DecididoPelostaff; // Corrigido para DecididoPelostaff
+
+    var revisaoIcon = document.getElementById('revisaoIcon');
+    revisaoIcon.innerHTML = formData.revisao === 'aceita' ? '<span class="green-dot">&#x1F7E2;</span>' : '<span class="red-dot">&#x1F534;</span>';
+
+    document.getElementById('summaryDiv').style.display = 'block';
+}
+
+function sendToDiscord(formData) {
+    var webhookURL = 'https://discord.com/api/webhooks/1254508883603361933/Yg4vTAkdU94HfZj4vdCVY-r_VkqxFJKN_BMrrHIWc1KwBF4I6G-P_F59RVAg5XvPPsei';
+
+    var msg = {
+        username: 'Relatório de Revisão',
+        avatar_url: '',
+        content: '' +
+                 '** ** ' + formData.revisao + '\n' +
+                 '**ID:** ' + formData.id + '\n' +
+                 '**Ticket Denúncia:** ' + formData.ticketDenuncia + '\n' +
+                 '**Ticket Revisão:** ' + formData.ticketRevisao + '\n' +
+                 '**Motivo:** ' + formData.motivo + '\n' +
+                 '**Punição:** ' + formData.punicao + '\n' +
+                 '**Decidido Pelo staff:** ' + formData.DecididoPelostaff // Corrigido para DecididoPelostaff
+    };
+
+    var requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(msg)
+    };
+
+    fetch(webhookURL, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao enviar mensagem ao Discord: ' + response.status);
+            }
+            alert('Relatório enviado com sucesso para o Discord!');
+        })
+        .catch(error => {
+            console.error('Erro ao enviar mensagem ao Discord:', error);
+            alert('Erro ao enviar o relatório para o Discord. Por favor, tente novamente mais tarde.');
+        });
+}
+
+        function generateSummary() {
+            submitForm();
+        }
+    </script>
+</body>
+</html>
